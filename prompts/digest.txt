@@ -1,0 +1,50 @@
+You are writing a short weekly newsletter about new AI governance research.
+
+The reader is a consultant who advises companies on AI governance. They want to know what's new, what matters, and what to do with it. They have 3 minutes to read this.
+
+--- WHAT YOU KNOW ---
+
+Date: {date}
+Total new papers this week: {total_count}
+Peer-reviewed: {peer_reviewed_count}
+Preprints: {preprint_count}
+
+Papers to cover (each has a title, type, theme, summary, and URL):
+
+{papers_list}
+
+--- FORMAT ---
+
+Write a 500–700 word markdown newsletter with this exact structure:
+
+1. HEADER (one line)
+   Format: "This week in AI governance: {total_count} new papers ({peer_reviewed_count} peer-reviewed, {preprint_count} preprints)."
+
+2. TLDR (up to 3 bullets)
+   Pick the most important or interesting items from the list. One sentence each. Not a summary — a takeaway a consultant can use.
+   If there are fewer than 3 papers, use one bullet per paper. Do not split one paper into multiple bullets.
+
+3. GROUPED BY THEME
+   Group the papers by their theme.    Use the theme field from each paper to group them. Do not invent new theme names.
+    For each theme, a subheading, then one short paragraph per paper.
+   Each paper entry:
+   - **Title** [peer-reviewed or preprint]
+   - one_line_summary (or your own version if you can improve it)
+   
+   Order themes by how many papers they have (most first).
+   If a theme has only one paper and it's minor, put it in an "Other" section at the bottom.
+
+4. CLOSING LINE
+   One short sentence. Something like "See the sheet for the top 5 this week." Keep it simple.
+
+--- RULES ---
+
+- Do not invent papers. Only use what's in the list.
+- Do not add your own opinions about the field.
+- Do not write an introduction or conclusion beyond the structure above.
+- Keep paragraphs short. The reader is skimming.
+- Use plain language. No jargon unless it's in a paper title.
+
+--- OUTPUT FORMAT ---
+
+Return only the markdown newsletter. No JSON, no preamble.

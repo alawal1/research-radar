@@ -149,3 +149,82 @@ def search_papers(query: str, from_date: str, limit: int = 50) -> list[Paper]:
             )
         )
     return papers
+
+import gspread
+from google.oauth2.service_account import Credentials
+from schemas import SheetRow
+
+
+SHEET_SCOPES = [
+    "https://www.googleapis.com/auth/spreadsheets",
+]
+
+
+def _get_sheet_client(service_account_path: str):
+    """Create and return an authorized gspread client."""
+    creds = Credentials.from_service_account_file(
+        service_account_path,
+        scopes=SHEET_SCOPES,
+    )
+    return gspread.authorize(creds)
+
+
+def append_to_sheet(
+    rows: list[SheetRow],
+    sheet_id: str,
+    service_account_path: str,
+    tab_name: str = "Main",
+) -> int:
+    """
+    Append SheetRows to the given Google Sheet tab.
+
+    Args:
+        rows:                 List of SheetRow objects.
+        sheet_id:             The Google Sheet ID (from the URL).
+        service_account_path: Path to service_account.json.
+        tab_name:             Worksheet tab name. Default "Main".
+
+    Returns:
+        Number of rows appended.
+
+    Raises RuntimeError on any failure.
+    """
+    if not rows:
+        return 0
+
+    try:
+        client = _get_sheet_client(service_account_path)
+        sheet = client.open_by_key(sheet_id)
+        worksheet = sheet.worksheet(tab_name)
+
+        # Convert each SheetRow to a list in column order.
+        values = []
+        for row in rows:
+            values.append([
+                row.title,
+                row.type,
+                row.year if row.year is not None else "",
+                row.authors,
+                row.insights,
+                row.conclusions,
+                row.methods,
+                row.limitations,
+                row.contributions,
+                row.summary_abstract,
+                row.results,
+                row.literature_survey,
+                row.practical_implications,
+                row.objectives,
+                row.findings,
+                row.research_gap,
+                row.future_research,
+                row.dataset,
+                row.challenges,
+                row.applications,
+            ])
+
+        worksheet.append_rows(values)
+        return len(values)
+
+    except Exception as e:
+        raise RuntimeError(f"Failed to append to sheet: {e}")
