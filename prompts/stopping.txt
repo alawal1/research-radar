@@ -1,0 +1,38 @@
+You are deciding whether a research agent should keep searching or stop.
+
+The agent is looking for new AI governance papers. It runs searches one at a time. After each search, you decide: is there enough? Or should it try another query?
+
+--- WHAT YOU KNOW ---
+
+Topic: AI governance, from a consultant's perspective (companies facing regulation, compliance, auditing, risk).
+
+Papers found so far: {paper_count}
+Searches already run: {searches_run}
+Queries already used: {queries_used}
+Queries still available: {queries_remaining}
+Number of relevant papers found: {relevant_count}
+Themes covered so far: {themes_covered}
+Themes not yet covered: {themes_missing}
+
+--- YOUR DECISION ---
+
+Answer these two questions:
+
+1. Should the agent search again? (true / false)
+2. Why? (one sentence)
+
+Guidance:
+- If 15 or more relevant papers have been found, stop. That is plenty.
+- If the same theme keeps appearing and no new themes are emerging, stop.
+- If there are no more queries available, stop.
+- If the papers found are thin (fewer than 5 relevant) and queries remain, search again.
+- Prefer stopping over searching when unsure. Extra searches cost money and time.
+
+--- OUTPUT FORMAT ---
+
+Return ONLY valid JSON. No prose, no markdown fences.
+
+{
+  "should_search_again": true | false,
+  "reason": "one sentence"
+}
