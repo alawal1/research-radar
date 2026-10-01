@@ -25,7 +25,7 @@ search:
     - "AI impact assessment"
 
   # Max papers to fetch per query from OpenAlex.
-  results_per_query: 50
+  results_per_query: 5
 
 # --- Agent loop ---
 agent:
@@ -33,6 +33,7 @@ agent:
   enough_papers: 20        # stopping rule 4
   api_retries: 2           # stopping rule 6
   time_limit_seconds: 300  # stopping rule 7 (5 minutes)
+  max_papers_to_evaluate: 3   # for testing 
 
 # --- Gate 2 ---
 gate2:
