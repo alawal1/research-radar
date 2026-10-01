@@ -50,7 +50,7 @@ row = SheetRow.from_paper_and_gate(paper, gate)
 
 count = append_to_sheet(
     rows=[row],
-    sheet_id="1Raq8p_nVF2pOyQq4dh2SxdserFn_jAgF9OMougmKclI",
+    sheet_id="YOUR SHEET ID HERE",
     service_account_path="service_account.json",
     tab_name="Main",
 )
