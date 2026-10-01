@@ -1,0 +1,70 @@
+# AI Research Radar — configuration
+# Every number the agent needs lives here. Nothing hardcoded in Python.
+
+# --- Search ---
+search:
+  # Papers published on or after this many days ago.
+  lookback_days: 7
+
+  # The keywords the agent searches for. Grouped into queries by the LLM.
+  keywords:
+    - "AI governance"
+    - "AI regulation"
+    - "AI policy"
+    - "AI law"
+    - "AI compliance"
+    - "AI standards"
+    - "AI auditing"
+    - "AI risk"
+    - "AI oversight"
+    - "AI accountability"
+    - "AI transparency"
+    - "AI liability"
+    - "AI due diligence"
+    - "AI certification"
+    - "AI impact assessment"
+
+  # Max papers to fetch per query from OpenAlex.
+  results_per_query: 50
+
+# --- Agent loop ---
+agent:
+  max_searches: 4          # stopping rule 1
+  enough_papers: 20        # stopping rule 4
+  api_retries: 2           # stopping rule 6
+  time_limit_seconds: 300  # stopping rule 7 (5 minutes)
+
+# --- Gate 2 ---
+gate2:
+  # Cutoff mode: "strict" or "loose"
+  cutoff: strict
+  # strict: 6 = sound, 4-5 = uncertain, 0-3 = fail
+  # loose:  5-6 = sound, 3-4 = uncertain, 0-2 = fail
+
+  # Known preprint repositories. A preprint from outside this list fails Gate 2.
+  preprint_repositories:
+    - arxiv
+    - ssrn
+    - biorxiv
+    - medrxiv
+    - osf
+    - repec
+    - philarchive
+    - zenodo
+
+# --- Feasibility threshold ---
+feasibility:
+  score_floor: 6      # min score to enter the sheet (out of 8)
+  top_n: 5            # max papers per week in the sheet
+
+# --- Digest ---
+digest:
+  min_words: 500
+  max_words: 700
+  tldr_bullets: 3
+
+# --- Output paths ---
+paths:
+  seen_papers: "data/seen_papers.json"
+  run_logs: "data/runs"
+  digest_dir: "data/digests"

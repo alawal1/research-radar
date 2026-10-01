@@ -1,0 +1,99 @@
+You are extracting structured information from one academic paper about AI governance.
+
+You will be given a paper's title, metadata, and abstract. You will return a single JSON object with three parts:
+
+1. FEASIBILITY SCORES — four scores, each 0–2
+2. DIGEST HELPERS — a theme label and a one-line summary
+3. SHEET FIELDS — sixteen text fields for the research database
+
+--- PART 1: FEASIBILITY SCORES ---
+
+Score each criterion 0, 1, or 2:
+- 0 = not present
+- 1 = partially or weakly present
+- 2 = clearly present
+
+The four criteria:
+
+1. relevant — Is the paper clearly about AI governance?
+2. positioned — Does the paper discuss and position itself against prior work?
+3. practical — Does the paper have real-world implications?
+4. rigorous — Is the paper scientifically sound?
+
+For rigorous, do not equate "not empirical" with "unrigorous." A conceptual paper with a clear, coherent argument and a proposed framework can score 1, even without data or experiments. Score 0 only if the abstract is incoherent, unsupported, or vague.
+
+--- PART 2: DIGEST HELPERS ---
+
+theme — pick exactly one from this list:
+- EU regulation
+- Global standards
+- Corporate compliance
+- AI risk & liability
+- Auditing & certification
+- Public sector AI
+- Other
+
+one_line_summary — one sentence (max 25 words) that a consultant would find useful. Not a description of the paper. A takeaway.
+
+--- PART 3: SHEET FIELDS ---
+
+Extract these sixteen fields from the abstract. If the abstract does not state something, write exactly: "Not stated in abstract"
+
+- insights — key insights derived from the paper
+- conclusions — main conclusions drawn by the authors
+- methods — methodologies, frameworks, or techniques used
+- limitations — limitations or gaps acknowledged
+- contributions — unique contributions to the field
+- summary_abstract — a short summary of the abstract
+- results — main findings and results reported
+- literature_survey — previous research discussed and its relevance
+- practical_implications — real-world applications mentioned
+- objectives — research objectives stated by the authors
+- findings — concise summary of the findings
+- research_gap — the research gap identified or inferred
+- future_research — suggested future research directions
+- dataset — datasets used, including sources
+- challenges — challenges or difficulties noted
+- applications — applications discussed
+
+Important:
+- Use only information from the abstract. Do not add outside knowledge.
+- If a field is partially addressed, write what is stated, not what you assume.
+- "Not stated in abstract" is a complete and acceptable answer. Do not guess.
+
+--- OUTPUT FORMAT ---
+
+Return ONLY valid JSON. No prose, no markdown fences.
+
+{
+  "score_relevant": 0 | 1 | 2,
+  "score_positioned": 0 | 1 | 2,
+  "score_practical": 0 | 1 | 2,
+  "score_rigorous": 0 | 1 | 2,
+  "theme": "one of the seven options",
+  "one_line_summary": "one sentence",
+  "insights": "...",
+  "conclusions": "...",
+  "methods": "...",
+  "limitations": "...",
+  "contributions": "...",
+  "summary_abstract": "...",
+  "results": "...",
+  "literature_survey": "...",
+  "practical_implications": "...",
+  "objectives": "...",
+  "findings": "...",
+  "research_gap": "...",
+  "future_research": "...",
+  "dataset": "...",
+  "challenges": "...",
+  "applications": "..."
+}
+
+--- THE PAPER ---
+
+Title: {title}
+Type: {type}
+Year: {year}
+Source: {source_name}
+Abstract: {abstract}

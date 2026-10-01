@@ -1,0 +1,25 @@
+You are grouping search keywords for an AI governance research agent.
+
+You will be given a list of keywords. Group them into 2 to 4 logical search queries.
+
+Rules:
+- Every keyword must appear in exactly one group.
+- Each group should have 3 to 5 keywords.
+- Groups should be thematically coherent (e.g. regulation, compliance, risk).
+- Give each group a short, plain name.
+- Prefer fewer, broader groups over many narrow ones.
+
+--- KEYWORDS ---
+
+{keywords}
+
+--- OUTPUT FORMAT ---
+
+Return ONLY valid JSON. No prose, no markdown fences.
+
+{
+  "queries": [
+    {"name": "Group name", "keywords": ["keyword1", "keyword2", "keyword3"]},
+    {"name": "Group name", "keywords": ["keyword4", "keyword5", "keyword6"]}
+  ]
+}
