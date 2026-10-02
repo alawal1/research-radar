@@ -2,6 +2,8 @@
 
 A weekly AI agent that monitors new research on AI governance, filters it by relevance and quality, and produces a consultant-ready digest — automatically.
 
+**Portfolio write-up:** https://alawal1.github.io/portfolio-site/projects/research-radar
+
 ## What it does
 
 Every Monday, the agent:
@@ -20,6 +22,15 @@ Staying current on AI governance research manually is exhausting and time-consum
 ## The digest
 
 Every week's digest is committed to [`data/digests/`](data/digests/).
+
+## How it runs
+
+The agent runs every Monday at 08:00 UTC via GitHub Actions. Each run:
+- Writes a new digest to `data/digests/`
+- Commits it back to the repo
+- Uploads a CSV of the top 5 papers as an artifact
+
+The digest is the primary output. The CSV is for those who want the structured data.
 
 **Sample:** [2026-10-02](data/digests/2026-10-02.md)
 
