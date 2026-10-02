@@ -194,7 +194,7 @@ def append_to_sheet(
 
     try:
         client = _get_sheet_client(service_account_path)
-        sheet = client.open_by_key(sheet_id)
+        sheet = client.open_by_key(sheet_id.strip())
         worksheet = sheet.worksheet(tab_name)
 
         # Convert each SheetRow to a list in column order.

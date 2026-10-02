@@ -284,7 +284,7 @@ def run():
     # 5. Write to sheet
     added = append_to_sheet(
         rows=sheet_rows,
-        sheet_id=os.environ["GOOGLE_SHEET_ID"],
+        sheet_id=os.environ["GOOGLE_SHEET_ID"].strip(),
         service_account_path="service_account.json",
         tab_name="Main",
     )
