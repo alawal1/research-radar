@@ -94,10 +94,11 @@ prompts/            — one prompt per LLM call
 .github/workflows/  — weekly cron
 data/digests/       — committed weekly digests
 
+## Learn more
 
-## Case study
-
-(coming soon)
+- [Learnings](https://alawal1.github.io/portfolio-site/projects/research-radar/learnings) — what broke and what I learned
+- [Design decisions](https://alawal1.github.io/portfolio-site/projects/research-radar/design-decisions) — the tradeoffs behind the agent
+- [Updates](https://alawal1.github.io/portfolio-site/projects/research-radar/updates) — a running changelog
 
 ## Design notes
 
