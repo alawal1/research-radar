@@ -34,6 +34,14 @@ jobs:
       - name: Decode service account
         run: echo "${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON_BASE64 }}" | base64 --decode > service_account.json
 
+      - name: Debug env
+        run: |
+          echo "Sheet ID starts with: ${GOOGLE_SHEET_ID:0:10}"
+          echo "Service account file size:"
+          wc -c service_account.json
+        env:
+          GOOGLE_SHEET_ID: ${{ secrets.GOOGLE_SHEET_ID }}
+
       - name: Run agent
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
