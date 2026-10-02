@@ -1,4 +1,4 @@
-name: Weekly AI Research Radar
+name: Weekly Research Radar
 
 on:
   schedule:
@@ -20,47 +20,18 @@ jobs:
 
       - name: Install dependencies
         run: pip install -r requirements.txt
-    
-      - name: Debug secrets
-        run: |
-          echo "Sheet ID length: ${#GOOGLE_SHEET_ID}"
-          echo "OpenAI key length: ${#OPENAI_API_KEY}"
-          echo "B64 length: ${#GOOGLE_SERVICE_ACCOUNT_JSON_BASE64}"
-        env:
-          GOOGLE_SHEET_ID: ${{ secrets.GOOGLE_SHEET_ID }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          GOOGLE_SERVICE_ACCOUNT_JSON_BASE64: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON_BASE64 }}
 
       - name: Decode service account
         run: echo "${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON_BASE64 }}" | base64 --decode > service_account.json
 
-      - name: Verify decoded JSON
-        run: |
-          head -c 100 service_account.json
-          echo ""
-          python -c "import json; json.load(open('service_account.json')); print('JSON is valid')"
-          
-      - name: Verify service account JSON
-        run: |
-          echo "=== File size ==="
-          wc -c service_account.json
-          echo "=== First 200 chars ==="
-          head -c 200 service_account.json
-          echo ""
-          echo "=== JSON validity ==="
-          python -c "import json; d=json.load(open('service_account.json')); print('valid'); print('email:', d.get('client_email')); print('project_id:', d.get('project_id'))"
-
-      - name: Debug env
-        run: |
-          echo "Sheet ID: [$GOOGLE_SHEET_ID]"
-          echo "Length: ${#GOOGLE_SHEET_ID}"
-          echo "Hex dump of first 50 chars:"
-          printf '%s' "$GOOGLE_SHEET_ID" | head -c 50 | xxd
-        env:
-          GOOGLE_SHEET_ID: ${{ secrets.GOOGLE_SHEET_ID }}
-
       - name: Run agent
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          GOOGLE_SHEET_ID: ${{ secrets.GOOGLE_SHEET_ID }}
+          WRITE_TO_SHEET: "false"
         run: python run.py
+
+      - name: Upload sheet rows
+        uses: actions/upload-artifact@v4
+        with:
+          name: sheet-rows
+          path: data/sheet_rows.csv

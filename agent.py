@@ -280,15 +280,41 @@ def run():
         SheetRow.from_paper_and_gate(p, g)
         for p, g, s in scored[:top_n] if s >= threshold
     ]
-
-    # 5. Write to sheet
-    added = append_to_sheet(
-        rows=sheet_rows,
-        sheet_id=os.environ["GOOGLE_SHEET_ID"].strip(),
-        service_account_path="service_account.json",
-        tab_name="Main",
-    )
-    trace["papers_added"] = added
+    # Write sheet rows
+    if os.environ.get("WRITE_TO_SHEET", "true").lower() == "true":
+        added = append_to_sheet(
+            rows=sheet_rows,
+            sheet_id=os.environ["GOOGLE_SHEET_ID"].strip(),
+            service_account_path="service_account.json",
+            tab_name="Main",
+        )
+        trace["papers_added"] = added
+    else:
+        # Save rows to a file instead
+        import csv
+        os.makedirs("data", exist_ok=True)
+        with open("data/sheet_rows.csv", "w", newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow([
+                "Title", "Type", "Year", "Authors", "Insights", "Conclusions",
+                "Methods", "Limitations", "Contributions", "Summary Abstract",
+                "Results", "Literature Survey", "Practical Implications",
+                "Objectives", "Findings", "Research Gap", "Future Research",
+                "Dataset", "Challenges", "Applications",
+            ])
+            for row in sheet_rows:
+                writer.writerow([
+                    row.title, row.type, row.year or "", row.authors,
+                    row.insights, row.conclusions, row.methods, row.limitations,
+                    row.contributions, row.summary_abstract, row.results,
+                    row.literature_survey, row.practical_implications,
+                    row.objectives, row.findings, row.research_gap,
+                    row.future_research, row.dataset, row.challenges,
+                    row.applications,
+                ])
+        trace["papers_added"] = 0
+        trace["rows_saved_to_file"] = len(sheet_rows)
+    
 
     # 6. Digest
     papers_list = build_paper_list_for_digest(kept_papers, gates)
