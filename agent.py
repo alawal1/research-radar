@@ -319,7 +319,32 @@ def run():
     #             ])
     #     trace["papers_added"] = 0
     #     trace["rows_saved_to_file"] = len(sheet_rows)
-    
+        # Write sheet rows to CSV.
+    # The cloud agent runs on GitHub Actions, where the Google Sheets API
+    # returns 404 with credentials that work locally. The CSV is downloaded
+    # and pushed to Sheets by sync_to_sheet.py on the user's machine.
+    import csv
+    os.makedirs("data", exist_ok=True)
+    with open("data/sheet_rows.csv", "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow([
+            "Title", "Type", "Year", "Authors", "Insights", "Conclusions",
+            "Methods", "Limitations", "Contributions", "Summary Abstract",
+            "Results", "Literature Survey", "Practical Implications",
+            "Objectives", "Findings", "Research Gap", "Future Research",
+            "Dataset", "Challenges", "Applications",
+        ])
+        for row in sheet_rows:
+            writer.writerow([
+                row.title, row.type, row.year or "", row.authors,
+                row.insights, row.conclusions, row.methods, row.limitations,
+                row.contributions, row.summary_abstract, row.results,
+                row.literature_survey, row.practical_implications,
+                row.objectives, row.findings, row.research_gap,
+                row.future_research, row.dataset, row.challenges,
+                row.applications,
+            ])
+    trace["rows_saved_to_file"] = len(sheet_rows)
 
     # 6. Digest
     papers_list = build_paper_list_for_digest(kept_papers, gates)
