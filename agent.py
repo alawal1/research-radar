@@ -280,40 +280,45 @@ def run():
         SheetRow.from_paper_and_gate(p, g)
         for p, g, s in scored[:top_n] if s >= threshold
     ]
-    # Write sheet rows
-    if os.environ.get("WRITE_TO_SHEET", "true").lower() == "true":
-        added = append_to_sheet(
-            rows=sheet_rows,
-            sheet_id=os.environ["GOOGLE_SHEET_ID"].strip(),
-            service_account_path="service_account.json",
-            tab_name="Main",
-        )
-        trace["papers_added"] = added
-    else:
-        # Save rows to a file instead
-        import csv
-        os.makedirs("data", exist_ok=True)
-        with open("data/sheet_rows.csv", "w", newline="") as f:
-            writer = csv.writer(f)
-            writer.writerow([
-                "Title", "Type", "Year", "Authors", "Insights", "Conclusions",
-                "Methods", "Limitations", "Contributions", "Summary Abstract",
-                "Results", "Literature Survey", "Practical Implications",
-                "Objectives", "Findings", "Research Gap", "Future Research",
-                "Dataset", "Challenges", "Applications",
-            ])
-            for row in sheet_rows:
-                writer.writerow([
-                    row.title, row.type, row.year or "", row.authors,
-                    row.insights, row.conclusions, row.methods, row.limitations,
-                    row.contributions, row.summary_abstract, row.results,
-                    row.literature_survey, row.practical_implications,
-                    row.objectives, row.findings, row.research_gap,
-                    row.future_research, row.dataset, row.challenges,
-                    row.applications,
-                ])
-        trace["papers_added"] = 0
-        trace["rows_saved_to_file"] = len(sheet_rows)
+    # # Write sheet rows
+    # Two output modes:
+    #   WRITE_TO_SHEET=true (default, local): write directly to Google Sheets.
+    #   WRITE_TO_SHEET=false (cloud): write CSV instead, since the Sheets API
+    #   returns 404 from GitHub Actions. The CSV is downloaded and synced
+    #   locally via sync_to_sheet.py.
+    # if os.environ.get("WRITE_TO_SHEET", "true").lower() == "true":
+    #     added = append_to_sheet(
+    #         rows=sheet_rows,
+    #         sheet_id=os.environ["GOOGLE_SHEET_ID"].strip(),
+    #         service_account_path="service_account.json",
+    #         tab_name="Main",
+    #     )
+    #     trace["papers_added"] = added
+    # else:
+    #     # Save rows to a file instead
+    #     import csv
+    #     os.makedirs("data", exist_ok=True)
+    #     with open("data/sheet_rows.csv", "w", newline="") as f:
+    #         writer = csv.writer(f)
+    #         writer.writerow([
+    #             "Title", "Type", "Year", "Authors", "Insights", "Conclusions",
+    #             "Methods", "Limitations", "Contributions", "Summary Abstract",
+    #             "Results", "Literature Survey", "Practical Implications",
+    #             "Objectives", "Findings", "Research Gap", "Future Research",
+    #             "Dataset", "Challenges", "Applications",
+    #         ])
+    #         for row in sheet_rows:
+    #             writer.writerow([
+    #                 row.title, row.type, row.year or "", row.authors,
+    #                 row.insights, row.conclusions, row.methods, row.limitations,
+    #                 row.contributions, row.summary_abstract, row.results,
+    #                 row.literature_survey, row.practical_implications,
+    #                 row.objectives, row.findings, row.research_gap,
+    #                 row.future_research, row.dataset, row.challenges,
+    #                 row.applications,
+    #             ])
+    #     trace["papers_added"] = 0
+    #     trace["rows_saved_to_file"] = len(sheet_rows)
     
 
     # 6. Digest
@@ -327,7 +332,8 @@ def run():
     if others:
         count_parts.append(f"{others} other")
 
-    count_line = f"This week in AI governance: {len(kept_papers)} new papers ({', '.join(count_parts)})."
+    paper_word = "paper" if len(kept_papers) == 1 else "papers"
+    count_line = f"This week in AI governance: {len(kept_papers)} new {paper_word} ({', '.join(count_parts)})."
 
     digest_prompt = _fill(
         _read_prompt("digest"),
@@ -344,6 +350,11 @@ def run():
     print("=== DIGEST ===")
     print(digest_text)
     print("=== END DIGEST ===")
+
+    # Save the digest to a file for the local publish script.
+    os.makedirs("data", exist_ok=True)
+    with open("data/digest.md", "w") as f:
+        f.write(digest_text)
 
     # 7. Save seen
     save_seen_papers(seen | set(all_papers.keys()), config["paths"]["seen_papers"])

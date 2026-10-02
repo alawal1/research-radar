@@ -33,9 +33,8 @@ Write a 500–700 word markdown newsletter with this exact structure:
    
    Order themes by how many papers they have (most first).
    If a theme has only one minor paper, group it under "Other". If there are no papers under "Other", omit the section entirely. Do not write filler text.
-4. CLOSING LINE
-   One short sentence. Something like "See the sheet for the top 5 this week." Keep it simple.
 
+4. CLOSING — one short sentence, no heading. Something like "See the sheet for the top 5 this week."
 --- RULES ---
 
 - Do not invent papers. Only use what's in the list.

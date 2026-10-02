@@ -30,8 +30,10 @@ jobs:
           WRITE_TO_SHEET: "false"
         run: python run.py
 
-      - name: Upload sheet rows
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: sheet-rows
-          path: data/sheet_rows.csv
+          name: outputs
+          path: |
+            data/sheet_rows.csv
+            data/digest.md
