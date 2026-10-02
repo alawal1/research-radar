@@ -39,6 +39,16 @@ jobs:
           head -c 100 service_account.json
           echo ""
           python -c "import json; json.load(open('service_account.json')); print('JSON is valid')"
+          
+      - name: Verify service account JSON
+        run: |
+          echo "=== File size ==="
+          wc -c service_account.json
+          echo "=== First 200 chars ==="
+          head -c 200 service_account.json
+          echo ""
+          echo "=== JSON validity ==="
+          python -c "import json; d=json.load(open('service_account.json')); print('valid'); print('email:', d.get('client_email')); print('project_id:', d.get('project_id'))"
 
       - name: Debug env
         run: |
