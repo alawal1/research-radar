@@ -377,8 +377,9 @@ def run():
     print("=== END DIGEST ===")
 
     # Save the digest to a file for the local publish script.
-    os.makedirs("data", exist_ok=True)
-    with open("data/digest.md", "w") as f:
+    os.makedirs("data/digests", exist_ok=True)
+    digest_date = datetime.now().strftime("%Y-%m-%d")
+    with open(f"data/digests/{digest_date}.md", "w") as f:
         f.write(digest_text)
 
     # 7. Save seen

@@ -155,8 +155,8 @@ from google.oauth2.service_account import Credentials
 from schemas import SheetRow
 
 
-SHEET_SCOPES = [
-    "https://www.googleapis.com/auth/spreadsheets",
+GOOGLE_SCOPES = [
+    "https://www.googleapis.com/auth/spreadsheets"
 ]
 
 
@@ -164,7 +164,7 @@ def _get_sheet_client(service_account_path: str):
     """Create and return an authorized gspread client."""
     creds = Credentials.from_service_account_file(
         service_account_path,
-        scopes=SHEET_SCOPES,
+        scopes=GOOGLE_SCOPES,
     )
     return gspread.authorize(creds)
 
@@ -228,3 +228,60 @@ def append_to_sheet(
 
     except Exception as e:
         raise RuntimeError(f"Failed to append to sheet: {e}")
+
+def publish_digest_to_doc(
+    digest_text: str,
+    title: str,
+    service_account_path: str,
+    share_with_email: str,
+    folder_id: str | None = None,
+) -> str:
+    """
+    Create a Google Doc with the digest text and share it with the given email.
+
+    Returns the Doc URL.
+    """
+    import gspread
+    from googleapiclient.discovery import build
+
+    try:
+        creds = Credentials.from_service_account_file(
+            service_account_path,
+            scopes=GOOGLE_SCOPES,
+        )
+
+        # Create the Doc.
+        docs_service = build("docs", "v1", credentials=creds)
+        doc = docs_service.documents().create(body={"title": title}).execute()
+        doc_id = doc["documentId"]
+
+        # Move the Doc into the target folder, if one is given.
+        if folder_id:
+            drive_service = build("drive", "v3", credentials=creds)
+            drive_service.files().update(
+                fileId=doc_id,
+                addParents=folder_id,
+                fields="id, parents",
+            ).execute()
+
+        # Insert the digest text.
+        docs_service.documents().batchUpdate(
+            documentId=doc_id,
+            body={
+                "requests": [
+                    {"insertText": {"location": {"index": 1}, "text": digest_text}}
+                ]
+            },
+        ).execute()
+
+        # Share with the user.
+        drive_service.permissions().create(
+            fileId=doc_id,
+            body={"type": "user", "role": "writer", "emailAddress": share_with_email},
+            sendNotificationEmail=True,
+        ).execute()
+
+        return f"https://docs.google.com/document/d/{doc_id}/edit"
+
+    except Exception as e:
+        raise RuntimeError(f"Failed to publish digest to Doc: {e}")

@@ -6,3 +6,4 @@ google-auth
 pandas
 pyyaml
 python-dotenv
+google-api-python-client

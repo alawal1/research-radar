@@ -37,3 +37,12 @@ jobs:
           path: |
             data/sheet_rows.csv
             data/digest.md
+            
+      - name: Commit digest
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          mkdir -p data/digests
+          git add -f data/digests
+          git commit -m "Add digest $(date +%Y-%m-%d)" || echo "No changes to commit"
+          git push

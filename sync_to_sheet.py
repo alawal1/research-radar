@@ -23,15 +23,18 @@ from tools import append_to_sheet
 
 DOWNLOADS_DIR = Path.home() / "Downloads"
 CSV_FILENAME = "sheet_rows.csv"
+SEARCH_DIRS = [DOWNLOADS_DIR, DOWNLOADS_DIR / "outputs"]
 SERVICE_ACCOUNT_PATH = "service_account.json"
 TAB_NAME = "Main"
 
-
 def find_csv() -> Path | None:
-    """Look for sheet_rows.csv in Downloads. Handles the (1) suffix for duplicates."""
-    candidates = sorted(DOWNLOADS_DIR.glob(f"{CSV_FILENAME}*"), key=lambda p: p.stat().st_mtime, reverse=True)
+    """Look for sheet_rows.csv in Downloads and Downloads/outputs, newest first."""
+    candidates = []
+    for d in SEARCH_DIRS:
+        if d.exists():
+            candidates.extend(d.glob(f"{CSV_FILENAME}*"))
+    candidates.sort(key=lambda p: p.stat().st_mtime, reverse=True)
     return candidates[0] if candidates else None
-
 
 def load_rows_from_csv(path: Path) -> list[SheetRow]:
     """Read the CSV and return SheetRow objects."""
