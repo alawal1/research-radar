@@ -19,6 +19,7 @@ The user does NOT care about:
 - Research on AI in specific industries (healthcare, education, etc.) unless it addresses governance
 - Opinion pieces, blog posts, or non-research content
 - Papers that mention "AI governance" only in passing
+- Papers about AI governance *within* universities, schools, or research institutions (e.g. academic AI policy, education-sector frameworks, institutional inventories). The user cares about governance of AI in companies, regulated sectors, and public administration — not AI governance as an academic discipline.
 
 The governance, policy, regulatory, compliance, or organizational dimension must be the paper's primary contribution, not a secondary observation. 
 Reject papers where governance is mentioned only in a section, conclusion, or as one of several topics.

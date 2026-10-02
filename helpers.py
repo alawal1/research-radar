@@ -4,6 +4,7 @@ import json
 from datetime import datetime
 from pathlib import Path
 import yaml
+import re
 
 from schemas import GateResult, Paper, SheetRow
 
@@ -66,3 +67,23 @@ def build_paper_list_for_digest(
         lines.append(f"  URL: {paper.url}")
         lines.append("")
     return "\n".join(lines)
+
+def _normalize_title(title: str) -> str:
+    """Lowercase, strip punctuation and extra spaces."""
+    title = title.lower()
+    title = re.sub(r"[^\w\s]", "", title)   # remove punctuation
+    title = re.sub(r"\s+", " ", title)      # collapse whitespace
+    return title.strip()
+
+
+def dedupe_papers(papers: list[Paper]) -> list[Paper]:
+    """Remove papers with duplicate normalized titles. Keeps first occurrence."""
+    seen_titles = set()
+    result = []
+    for paper in papers:
+        key = _normalize_title(paper.title)
+        if key in seen_titles:
+            continue
+        seen_titles.add(key)
+        result.append(paper)
+    return result

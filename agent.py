@@ -21,12 +21,14 @@ from openai import OpenAI
 
 from helpers import (
     build_paper_list_for_digest,
+    dedupe_papers,
     feasibility_total,
     get_already_seen_papers,
     load_config,
     log_run,
     save_seen_papers,
 )
+
 from schemas import GateResult, Paper, SheetRow
 from tools import append_to_sheet, search_papers
 
@@ -207,11 +209,11 @@ def should_keep_searching(state: dict) -> dict:
 # --- Main loop ---
 
 def run():
-    trace = {"queries": [], "papers_found": 0, "papers_kept": 0, "papers_added": 0}
-    
-    from_date = (datetime.now() - timedelta(days=config["search"]["lookback_days"])).strftime("%Y-%m-%d")
-    seen = get_already_seen_papers(config["paths"]["seen_papers"])
 
+    from_date = (datetime.now() - timedelta(days=config["search"]["lookback_days"])).strftime("%Y-%m-%d")
+    trace = {"queries": [], "papers_found": 0, "papers_kept": 0, "papers_added": 0}
+    seen = get_already_seen_papers(config["paths"]["seen_papers"])
+    
     # 1. Group keywords
     queries = group_keywords(config["search"]["keywords"])
     trace["queries_planned"] = [q["name"] for q in queries]
@@ -243,6 +245,11 @@ def run():
             break
 
     trace["papers_found"] = len(all_papers)
+
+    # Dedupe by normalized title (same paper can appear with different IDs).
+    deduped = dedupe_papers(list(all_papers.values()))
+    trace["papers_after_dedupe"] = len(deduped)
+    all_papers = {p.id: p for p in deduped}
 
     # 3. Evaluate each paper
     gates: dict[str, GateResult] = {}
@@ -285,14 +292,24 @@ def run():
 
     # 6. Digest
     papers_list = build_paper_list_for_digest(kept_papers, gates)
+
+    peer_reviewed = sum(1 for p in kept_papers if p.type == "peer-reviewed")
+    preprints = sum(1 for p in kept_papers if p.type == "preprint")
+    others = len(kept_papers) - peer_reviewed - preprints
+
+    count_parts = [f"{peer_reviewed} peer-reviewed", f"{preprints} preprints"]
+    if others:
+        count_parts.append(f"{others} other")
+
+    count_line = f"This week in AI governance: {len(kept_papers)} new papers ({', '.join(count_parts)})."
+
     digest_prompt = _fill(
         _read_prompt("digest"),
         date=datetime.now().strftime("%Y-%m-%d"),
-        total_count=len(kept_papers),
-        peer_reviewed_count=sum(1 for p in kept_papers if p.type == "peer-reviewed"),
-        preprint_count=sum(1 for p in kept_papers if p.type == "preprint"),
+        count_line=count_line,
         papers_list=papers_list,
     )
+    
     digest_response = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[{"role": "user", "content": digest_prompt}],

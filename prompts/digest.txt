@@ -18,7 +18,7 @@ Papers to cover (each has a title, type, theme, summary, and URL):
 Write a 500–700 word markdown newsletter with this exact structure:
 
 1. HEADER (one line)
-   Format: "This week in AI governance: {total_count} new papers ({peer_reviewed_count} peer-reviewed, {preprint_count} preprints)."
+   Use this exact line: {count_line}
 
 2. TLDR (up to 3 bullets)
    Pick the most important or interesting items from the list. One sentence each. Not a summary — a takeaway a consultant can use.
@@ -32,8 +32,7 @@ Write a 500–700 word markdown newsletter with this exact structure:
    - one_line_summary (or your own version if you can improve it)
    
    Order themes by how many papers they have (most first).
-   If a theme has only one paper and it's minor, put it in an "Other" section at the bottom.
-
+   If a theme has only one minor paper, group it under "Other". If there are no papers under "Other", omit the section entirely. Do not write filler text.
 4. CLOSING LINE
    One short sentence. Something like "See the sheet for the top 5 this week." Keep it simple.
 
