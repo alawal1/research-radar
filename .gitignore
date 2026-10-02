@@ -9,3 +9,4 @@ data/
 service_account.json
 data/*
 !data/digests/
+learnings.md
