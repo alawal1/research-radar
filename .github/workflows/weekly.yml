@@ -20,6 +20,16 @@ jobs:
 
       - name: Install dependencies
         run: pip install -r requirements.txt
+    
+      - name: Debug secrets
+        run: |
+          echo "Sheet ID length: ${#GOOGLE_SHEET_ID}"
+          echo "OpenAI key length: ${#OPENAI_API_KEY}"
+          echo "B64 length: ${#GOOGLE_SERVICE_ACCOUNT_JSON_BASE64}"
+        env:
+          GOOGLE_SHEET_ID: ${{ secrets.GOOGLE_SHEET_ID }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GOOGLE_SERVICE_ACCOUNT_JSON_BASE64: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON_BASE64 }}
 
       - name: Decode service account
         run: echo "${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON_BASE64 }}" | base64 --decode > service_account.json
