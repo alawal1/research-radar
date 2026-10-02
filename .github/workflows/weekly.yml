@@ -33,6 +33,12 @@ jobs:
 
       - name: Decode service account
         run: echo "${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON_BASE64 }}" | base64 --decode > service_account.json
+        
+      - name: Verify decoded JSON
+        run: |
+          head -c 100 service_account.json
+          echo ""
+          python -c "import json; json.load(open('service_account.json')); print('JSON is valid')"
 
       - name: Debug env
         run: |
