@@ -7,3 +7,4 @@ data/
 .DS_Store
 .pytest_cache/
 service_account.json
+data/
