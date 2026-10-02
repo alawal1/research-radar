@@ -43,9 +43,9 @@ jobs:
       - name: Debug env
         run: |
           echo "Sheet ID: [$GOOGLE_SHEET_ID]"
-          echo "Sheet ID length: ${#GOOGLE_SHEET_ID}"
-          echo "Service account email:"
-          python -c "import json; print(json.load(open('service_account.json'))['client_email'])"
+          echo "Length: ${#GOOGLE_SHEET_ID}"
+          echo "Hex dump of first 50 chars:"
+          printf '%s' "$GOOGLE_SHEET_ID" | head -c 50 | xxd
         env:
           GOOGLE_SHEET_ID: ${{ secrets.GOOGLE_SHEET_ID }}
 
